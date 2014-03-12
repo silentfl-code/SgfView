@@ -1,0 +1,141 @@
+﻿<html>
+<meta charset="UTF-8" />
+<title>Game</title>
+<script language="javascript">
+function sqr(x) { return x*x; };
+function supportsCanvas() { return !!document.createElement('canvas').getContext('2d'); };
+function getClientWidth(){ return (window.innerWidth ? window.innerWidth : (document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.offsetWidth)) -20; }
+function getClientHeight(){ return (window.innerHeight ? window.innerHeight : (document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.offsetHeight)) - 20; }
+//константы, надо привязать к размерам экрана
+var N = 19;	//считаем размеры для досок 19х19
+
+//высота канваса в пикселах
+var size = Math.min(getClientHeight(), getClientWidth());
+var D = size / (N+1);	//размер ячейки
+var R = D-4;		//размер камня
+var board = new Array(N*N);	//состояние доски
+var left = (getClientWidth() - size) / 2;
+var HalfX = getClientWidth() / 2;
+
+var countImage = 0;
+var img1 = new Image(); img1.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAABGdBTUEAALGPC/xhBQAAAj5JREFUaEPdmmGuwyAMg9ebvaPt5n2biihQCCF2AK3av1LwFxta0I7zPF/U6zgOoT/6cK9Pj/iVKj7ff8Iva4kP/Kk+0klUI4tu3b0fB0QYAa6xbbqfT4XeTBjDAFzpKYwNYwDATzqCoQUgBkYTvO9wukvVbrL6i1DJ0AdYol7PIAHMCb3mvSGkqQOgyat3GzlLTYCFyam+KFom1AG2Ui/PhwrAhuoFhhJgW/Utht8CmFN+cHUuFqXMAW8A/bZB3lGkK9INMFM9OFZqwgyAtPDgHug5lQMAWJLunuvJAL6/owleANWqU+ZAYYILQFc9bnjmAN5dzINGOriMpmN9D2mugxowkdf+Y+iijEgDGJK+lwMG6WQAc37M0lkAd25H4whKXwxAUW+2vah1EKN0gCV9gQNc6bMBPNTPjpAHgzK3mlMj7WuYi7EAIH4GUkiWARg+e6rANADzxxzoAw7wXQnwr1Ezxi4A5kRtBGCb3EwA8zSoHiMrQwUCXBMgzAEigD5R+wIoE0UG4JqgYUAAYn7uCHkAyBh8AD+G6sQwA6TlzxxwBXgyuAB4M6QYNoCi/KUDEwBsuuNTfYCdGZ7qKw6E1xvjsBEsdvF4VX0TYDcfWuolgH0YBPV9ANbxgTlO4Qym/W+Pn/67TcRe4oOcnFtb25zszmQGpfrOHCjYiEeCwpTohr5UpXQgjZOTG6PSsx3ZWgybdAggvrCRXMXd82j50vb9ZVTTe7qRl5f8rKWm614bDkBWEvFYoqdn+P4/lUoF0gLGpL8AAAAASUVORK5CYII=";
+var img3 = new Image(); img3.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAnlJREFUeF7tm2uShCAMhGfnZHu0Pbmzo6UWIEgSujVQbpW/BpD+6ITH4s80TZ/XRX/v91v0pm+fROUghWYArOfbwRnu/kx/vx/Jc6jH7CNavEVwDUrUJhjGCwVg62RNTOvv+3tAIJoBXCU8BYcCYQZwl3A0CBOAWXyrldH1lz4ZwkINwKP4DaYFggqAZ/FWCCIAXuJdGjaaBCkGIH25l3LScKgC6MH2JegSCKcAehYvzQlFACOIl0DIAhhJfA3CAyBdPaFH39MUmkuKBwewAHgAUQWAFj/HX3q4wXiHZu2RQogcwOhcDsCdbigCYIgvOSCFohlBRNkQwu6AOwFc7Qi3AFiDkDtE2Wa/xQHMF5/lgDvzw+YCtwDYYdENAJY7uwLAcMMOgEU43IRY80CpHmIqDKZo7gkvWnzYXiuIta1+AbS6dwgALflhKAAWEEMC0ITFkAA0iXEoABrhyRT9zALU//S6Xwd43Q2yd4rPXmC9T+B+O2yZ3yUJsRsHSMRYykQAmHnAmgQtoqR1NvGL7v1sjHTvxwJAKsRazi0AqyBtvSwAVhhIHaAVYS0fio9C4C4AViHWeqcAGBDYx1oaEKn4gwOuAqDpNLKsCAAaAvIMrwVGTnzWAWgALZ1G1lUBGA1CSXzRAezFEXJka22dia8C6N0JNfEiAL1CkIhXAdCcttZsyf5930ILvh+o3hUOr9H1AEE68tEFCc2XFp4haMWLQ4B9mRIREhbxZgBbYvTgBk2855yuygHZBtYvQxGjqGmjVbg5B5TyBevwMoWCEg4HEK4e0TCiDZVgalMldU1hbdn0LEBq8UM9sOhoateKaikvPh4jCk77/w/vE6Qt3PGyIQAAAABJRU5ErkJggg==";
+var canvas, ctx;
+var Game = <<SgfFile>>;
+
+Game.init = function Init() {
+		switch(this.SZ){
+			case '9': 
+				N = 9;
+			case '13':
+				N = 13;
+			case '19':
+				N = 19;
+			default:
+		};
+		//alert(size);
+		D = size / (N+1);
+		for (var i = 0; i < N*N; i++) board[i] = 0;
+		if (supportsCanvas()) {
+			var canvas = document.getElementById("canvas");
+			ctx = canvas.getContext('2d');
+			canvas.height = getClientHeight();
+			canvas.width  = getClientWidth();
+			canvas.addEventListener("mousedown", mouseClick, false);
+		}
+	};
+	
+Game.showBoard = function showBoard() {
+		//устанавливаем общий фон	
+		//TO DO: запилить красивую текстуру гобана
+		ctx.fillStyle = '#F0E68C';
+		ctx.fillRect(left,0,size,size);
+	
+		//рисуем линии сетки
+		ctx.fillStyle = '#000000';
+		ctx.beginPath();
+		for (var i = 0; i < N; i++){
+			ctx.moveTo(left + D*(i+1), D);
+			ctx.lineTo(left + D*(i+1), size-D);
+			ctx.moveTo(left + D, 	    D*(i+1));
+			ctx.lineTo(left + size-D,  D*(i+1));
+		}
+		ctx.stroke();
+		ctx.closePath();
+
+		//рисуем точки
+		ctx.fillStyle = '#000000';
+		for (var i = 0; i < 3; i++)
+			for (var j = 0; j < 3; j++){
+					ctx.beginPath();
+					ctx.arc(left + (i*6+4)*D, (j*6+4)*D, 3, 0, Math.PI*2, true);
+					ctx.closePath();
+					ctx.fill();
+					ctx.stroke();
+					ctx.restore();
+			}
+	
+		//рисуем состояние доски
+		for (var i = 0; i < N; i++)
+			for (var j = 0; j < N; j++){
+				var t = board[i*N+j];
+				if (t != 0){
+					if (t == 1) ctx.fillStyle = '#FFFFFF'; else ctx.fillStyle = '#202020';
+					ctx.beginPath();
+					ctx.arc(left + (i+1)*D, (j+1)*D, R/2, 0, Math.PI*2, true);
+					ctx.closePath();
+					ctx.fill(); // Если нужен круг, можно залить окружность
+					ctx.stroke();
+					ctx.restore();
+				}
+			}
+	};
+		
+Game.showPanels = function () {
+	//left side
+	ctx.drawImage(img1,0, getClientHeight() / 2);//-img1.height);
+	ctx.drawImage(img3,getClientWidth() - img3.width, getClientHeight() / 2);//-img3.height);
+};
+
+Game.nextMove = function () {
+      var m = this.moves[this.index];
+      if (this.index < this.moves.length-1) this.index++;
+      if (m.length == 3) alert('PASS');
+      else {
+	  var x = (m.substring(2,3)).charCodeAt(0)-97,
+	      y = (m.substring(3,4)).charCodeAt(0)-97;
+	  board[x * N + y] = ((m.substring(0,1) == "W") ? 1 : 2);
+	  this.showBoard();
+     };
+};
+
+Game.prevMove = function () {
+      if (this.index > 0) this.index--;
+	  var m = this.moves[this.index];
+      if (m.length == 3) alert('PASS');
+      else {
+	  var x = (m.substring(2,3)).charCodeAt(0)-97,
+	      y = (m.substring(3,4)).charCodeAt(0)-97;
+	  board[x * N + y] = 0;
+	  this.showBoard();
+     };
+};
+
+function mouseClick(event) {
+    if (event.offsetX > HalfX) {
+		Game.nextMove();
+	} else {
+		Game.prevMove();
+	};
+};
+		
+function start() {
+	Game.init();
+	Game.showBoard();
+	Game.showPanels();
+};
+</script>
+<body  onload="start();">
+<canvas id="canvas">Sorry, your browser not support canvas!</canvas>
+</body>
+</html>

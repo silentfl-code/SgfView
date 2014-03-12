@@ -12,7 +12,7 @@
 
 Было использовано следующее программное окружение:
 •	Oracle Database 10g Enterprise Edition Release 10.2.0.3.0 – Production With the Partitioning, OLAP and Data Mining options;
-•	NetBeans IDE 7.3.1 (Build 201306052037) 
-•	Java: 1.7.0_25; Java HotSpot(TM) Client VM 23.25-b01 
-•	Runtime: Java(TM) SE Runtime Environment 1.7.0_25-b17 
+•	NetBeans IDE 7.3.1 (Build 201306052037)
+•	Java: 1.7.0_25; Java HotSpot(TM) Client VM 23.25-b01
+•	Runtime: Java(TM) SE Runtime Environment 1.7.0_25-b17
 •	Windows 7 version 6.1 running on x86.
